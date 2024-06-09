@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Lata_app</string>
+    <string name="app_name">Lata</string>
+    <string name="facebook_app_id">440599511687961</string><string name="facebook_client_token">5ad9b2d324c30dd44e498c51453b232b</string>
 </resources>

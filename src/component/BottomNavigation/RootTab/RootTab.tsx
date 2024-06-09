@@ -1,18 +1,21 @@
-import { NavigatorScreenParams } from '@react-navigation/native';
 import { StyleProp, StyleSheet, TextStyle } from 'react-native';
-import HomeNavigation from '../../../Navigation/HomeNavigation';
-import ExploreNavigation from '../../../Navigation/ExploreNavigation';
-import CartNavigation from '../../../Navigation/CartNavigation';
-import OfferNavigation from '../../../Navigation/OfferNavigation';
-import AccountNavigation from '../../../Navigation/AccountNavigation';
-import { RootStackParamListHome } from '../../../Root/RootStackHome';
-import { RootStackParamListExplore } from '../../../Root/RootStackExplore';
-import { RootStackParamListCart } from '../../../Root/RootStackCart';
-import { RootStackParamListOffer } from '../../../Root/RootStackOffer';
-import { RootStackParamListAccount } from '../../../Root/RootStackAccount';
-import { COLORS } from '../../../utilities';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import { COLORS, ROUTES } from '../../constants';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { RootStackParamListExplore } from '../../Root/RootStackExplore';
+import { RootStackParamListHome } from '../../Root/RootStackHome';
+import { RootStackParamListCart } from '../../Root/RootStackCart';
+import { RootStackParamListOffer } from '../../Root/RootStackOffer';
+import { RootStackParamListAccount } from '../../Root/RootStackAccount';
+import HomeNavigation from '../../Navigation/HomeNavigation';
+import ExploreNavigation from '../../Navigation/ExploreNavigation';
+import CartNavigation from '../../Navigation/CartNavigation';
+import OfferNavigation from '../../Navigation/OfferNavigation';
+import AccountNavigation from '../../Navigation/AccountNavigation';
+import { Badge } from '@ant-design/react-native';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 export enum RootTabScreenENum {
     StackHome = 'Home',
@@ -43,22 +46,28 @@ export const RootBottomTab = () => {
     return Screens;
 }
 export const configTab = (route: any) => {
-    
+    const data = useSelector((state: any) => {
+        return state.SlicesReducer.user.cartItem;
+    });
     return {
         tabBarIcon: ({ color, focused }: any) => {
             let iconName: any;
-            if (route.name === 'Home') {
+            if (route.name === ROUTES.HOME) {
                 iconName = focused ? 'home-sharp' : 'home-outline';
-            } else if (route.name === 'Explore') {
+            } else if (route.name === ROUTES.EXPLORE) {
                 iconName = focused ? 'search-sharp' : 'search-outline';
-            } else if (route.name === "Cart") {
+            } else if (route.name === ROUTES.CART) {
                 iconName = focused ? 'cart' : 'cart-outline';
-            } else if (route.name === 'Offer') {
+            } else if (route.name === ROUTES.OFFER) {
                 iconName = focused ? 'ticket' : 'ticket-outline';
-            } else if (route.name === 'Account') {
+            } else if (route.name === ROUTES.ACCOUNT) {
                 iconName = focused ? 'person' : 'person-outline';
             }
-            return  <Icon name={iconName} size={22} color={color} />
+            return route.name === ROUTES.CART && data.length > 0 ?
+                <Badge dot>
+                    <Icon name={iconName} size={22} color={color} />
+                </Badge> :
+                <Icon name={iconName} size={22} color={color} />
 
         },
         headerShown: false,

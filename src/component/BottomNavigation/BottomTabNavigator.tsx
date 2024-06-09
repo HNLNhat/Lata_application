@@ -1,7 +1,10 @@
 import React from 'react';
 import { RootBottomTab, RootTabParamList, RootTabScreenENum, configTab } from './RootTab/RootTab';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { COLORS } from '../../utilities';
+import { RootStackScreenEnumHome } from '../Root/RootStackHome';
+import { COLORS } from '../constants';
+import { MD3LightTheme } from 'react-native-paper';
+import Spinner from 'react-native-loading-spinner-overlay';
 const Tab = createMaterialBottomTabNavigator<RootTabParamList>();
 
 const BottomTab = () => {

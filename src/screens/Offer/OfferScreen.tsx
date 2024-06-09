@@ -1,9 +1,16 @@
 import { Animated, FlatList, Image, TextInput, ScrollView, StyleSheet, Text, Keyboard, View, Pressable, NativeSyntheticEvent, TextInputSubmitEditingEventData, TouchableOpacity } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import Icon from 'react-native-vector-icons/Ionicons';
+// import Icon from 'react-native-vectonpm install react-number-formatr-icons/Ionicons';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons'; // Import đúng
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import TimeCountDown from './TimeCountDown';
 import { BG_COLOR, PADDING_HORIZONTAL, PADDING_TOP, WIDTH } from '../../utilities/utility';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { NumericFormat } from 'react-number-format';
+import { RootStackScreenEnumExplore } from '../../component/Root/RootStackExplore';
 import { useNavigation } from '@react-navigation/native';
 
 interface Product {
@@ -17,7 +24,7 @@ interface Product {
 const RenderItem = ({ item, offer, navigation }: { item: Product; offer: any, navigation: any }) => {
   
   return (
-    <TouchableOpacity style={styles.containerItemPD} >
+    <TouchableOpacity style={styles.containerItemPD} onPress={() => navigation.navigate('Explore', { screen: RootStackScreenEnumExplore.Productdetail, params: { id: item._id } })}>
       <View>
         <Image style={{ width: '100%', height: 120, borderRadius: 5 }} source={{ uri: item.image[0] }} />
       </View>
@@ -25,10 +32,10 @@ const RenderItem = ({ item, offer, navigation }: { item: Product; offer: any, na
       <Text style={styles.NamePD}>{item.productName.length < 20 ? item.productName : item.productName.substring(0, 30) + "..."}</Text>
       </View>
       <View>
-      <Text style={styles.PricePD}>{3412 + 'đ'}</Text>
+        <NumericFormat displayType={'text'} value={Number(item.price * (1 - (offer / 100)))} allowLeadingZeros thousandSeparator="," renderText={(formattedValue: any) => <Text style={styles.PricePD}>{formattedValue + 'đ'}</Text>} />
 
         <View style={styles.sale}>
-           <Text style={offer > 0 ? styles.txtOldPrice : styles.PricePD}>{13433 + 'đ'}</Text>
+          <NumericFormat displayType={'text'} value={Number(item.price)} allowLeadingZeros thousandSeparator="," renderText={(formattedValue: any) => <Text style={offer > 0 ? styles.txtOldPrice : styles.PricePD}>{formattedValue + 'đ'}</Text>} />
           
           <Text style={styles.txtSale}>{offer}% Off</Text>
         </View>
@@ -40,7 +47,14 @@ const RenderItem = ({ item, offer, navigation }: { item: Product; offer: any, na
 const OfferScreen = (props: NativeStackHeaderProps) => {
   const { item }: any = props.route.params;
   const { navigation } = props
+  const [search, setSearch] = useState<string>('');
   const [listProductSale, setListProductSale] = useState<[]>([])
+  useEffect(() => {
+    const listProduct = item.product.filter((item: any) => {
+      return item.productName.toLowerCase().includes(search.toLowerCase());
+    });
+    setListProductSale(listProduct);
+  }, [search])
 
   const translateAnimHeader = useRef(new Animated.Value(0)).current;
   const translateAnimSearch = useRef(new Animated.Value(0)).current;
@@ -93,7 +107,11 @@ const OfferScreen = (props: NativeStackHeaderProps) => {
       })
     ]).start();
   }
-
+  const setTextSearch = (e: string) => {
+    setTimeout(() => {
+      setSearch(e);
+    }, 1000);
+  }
 
   return (
     <View style={{ paddingHorizontal: PADDING_HORIZONTAL, paddingTop: PADDING_TOP, backgroundColor: BG_COLOR }}>
@@ -105,7 +123,8 @@ const OfferScreen = (props: NativeStackHeaderProps) => {
           <Text style={styles.textTitlePage}>Thông tin khuyến mãi</Text>
         </Animated.View>
         <TextInputAnimated onSubmitEditing={(e) => {
-          animationNone()
+          animationNone();
+          setTextSearch(e.nativeEvent.text);
         }}
           ref={refInput}
           style={{ alignSelf: 'center', fontSize: 17, borderBottomWidth: 0.5, paddingVertical: 0, position: 'absolute', width: '80%', height: 35, marginLeft: '20%', transform: [{ scaleX: animTextInput }], opacity: animTextInput }}
